@@ -12,5 +12,8 @@
     "url": "git+https://github.com/fadingNA/fragments.git"
   },
   "author": "Nonthachai Plodthong",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "3.0.3"
+  }
 }
