@@ -17,6 +17,12 @@ const {
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
     // TODO
+    this.id = id || randomUUID();
+    this.ownerId = ownerId;
+    this.created = created || new Date();
+    this.updated = updated || new Date();
+    this.type = type;
+    this.size = size;
   }
 
   /**
@@ -27,6 +33,10 @@ class Fragment {
    */
   static async byUser(ownerId, expand = false) {
     // TODO
+    const fragments = await listFragments(ownerId, expand);
+    if (!fragments) return [];
+    if (expand) return fragments.map((fragmentData) => new Fragment(fragmentData));
+    return fragments.map((fragmentId) => new Fragment({ ownerId, id: fragmentId }));
   }
 
   /**
@@ -37,6 +47,9 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     // TODO
+    const fData = await readFragment(ownerId, id);
+    if (!fData) throw new Error(`Fragment ${id} not found for user ${ownerId}`);
+    return new Fragment(fData);
   }
 
   /**
@@ -45,16 +58,18 @@ class Fragment {
    * @param {string} id fragment's id
    * @returns Promise<void>
    */
-  static delete(ownerId, id) {
+  static async delete(ownerId, id) {
     // TODO
+    await deleteFragment(ownerId, id);
   }
 
   /**
    * Saves the current fragment to the database
    * @returns Promise<void>
    */
-  save() {
+  async save() {
     // TODO
+    await writeFragment(this.ownerId, this.id, this);
   }
 
   /**
@@ -63,6 +78,7 @@ class Fragment {
    */
   getData() {
     // TODO
+    readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -72,6 +88,7 @@ class Fragment {
    */
   async setData(data) {
     // TODO
+    await writeFragmentData(this.ownerId, this.id, data);
   }
 
   /**
@@ -90,7 +107,7 @@ class Fragment {
    */
   get isText() {
     // TODO
-    return 
+    return true;
   }
 
   /**
@@ -99,6 +116,7 @@ class Fragment {
    */
   get formats() {
     // TODO
+    return true;
   }
 
   /**
@@ -108,6 +126,12 @@ class Fragment {
    */
   static isSupportedType(value) {
     // TODO
+    const supportedTypes = ['text/plain', 'text/plain: charset=utf-8'];
+
+    const parsedValue = contentType.parse(value).type;
+
+    // will return true if parsedValue is in supportedTypes
+    return supportedTypes.includes(parsedValue);
   }
 }
 

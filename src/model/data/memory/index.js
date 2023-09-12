@@ -5,30 +5,65 @@ const data = new MemoryDB();
 const metadata = new MemoryDB();
 
 // Write function fragment return a Promise
-const writeFragment = (fragment) => metadata.put(fragment.ownerId, fragment.id, fragment);
+const writeFragment = async (fragment) => 
+  new Promise((resolve, reject) => {
+    try {
+      const result = metadata.put(fragment.ownerId, fragment.id, fragment); // PUT
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 // Read a fragment from memory db
-const readFragment = (ownerId, id) => metadata.get(ownerId, id);
+const readFragment = (ownerId, id) => 
+  new Promise((resolve, reject) => {
+    try {
+      const result = metadata.get(ownerId, id); // GET
+      resolve(result);
+    } catch (error) {
+      reject(error, {
+        message: `Fragment ${id} not found for user ${ownerId}`,
+        code: 404,
+      });
+    }
+  });
 
-// write a fragment data buffer to memoery db
-const writeFragmentData = (ownerId, id, buffer) => data.put(ownerId, id, buffer);
+// write a fragment data buffer to memory db
+const writeFragmentData = async (ownerId, id, buffer) => 
+  new Promise((resolve, reject) => {
+    try {
+      const result = data.put(ownerId, id, buffer); // PUT
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 // read a fragment data buffer from memory db
-const readFragmentData = (ownerId, id) => data.get(ownerId, id);
+const readFragmentData = (ownerId, id) => 
+  new Promise((resolve, reject) => {
+    try {
+      const result = data.get(ownerId, id); // GET
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 // Get a List of fragment
 const listFragments = async (ownerId, expand = false) => {
   const fragments = await metadata.query(ownerId);
 
-  // if we dont' get any fragments back, return an empty array
-  if (expand || !fragments) {
-    return fragments;
+  // if we don't get any fragments back, return an empty array
+  if (!fragments || expand) {
+    return Promise.resolve(fragments);
   }
-  // Otherwise map to only sendback the ids
-  return fragments.map((fragment) => fragment.id);
+  // Otherwise map to only send back the ids
+  return Promise.resolve(fragments.map((fragment) => fragment.id));
 };
 
-const deleteFragment = (ownerId, id) =>
+const deleteFragment = async (ownerId, id) =>
   Promise.all([metadata.del(ownerId, id), data.del(ownerId, id)]);
 
 module.exports = {
