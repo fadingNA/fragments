@@ -93,6 +93,8 @@ Step10: Try to run the server with 3 methods
 - [x] npm run dev (run the server) 
 - [x] npm run debug (run the server) run the server with nodemon and debug mode
 
+
+
     
 
     
