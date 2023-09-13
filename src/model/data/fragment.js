@@ -4,6 +4,8 @@ const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
 
+const hash = require('../data/../../../src/hash')
+
 // Functions for working with fragment metadata/data using our DB
 const {
   readFragment,
@@ -12,16 +14,19 @@ const {
   writeFragmentData,
   listFragments,
   deleteFragment,
-} = require('./data');
+} = require('./memory/index');
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
     // TODO
-    this.id = id || randomUUID();
-    this.ownerId = ownerId;
-    this.created = created || new Date();
-    this.updated = updated || new Date();
-    this.type = type;
+    this.id = id || randomUUID(); //using a UUID with the built-in crypto module
+    this.ownerId = hash(ownerId); // using hash email
+    this.created = created || new Date().toISOString(); // ISO 8601 string
+    this.updated = updated || new Date().toISOString();
+    if (type === undefined) throw new Error('Fragment type is required');
+    if (!Fragment.isSupportedType(type)) throw new Error(`Unsupported type: ${type}`);
+    else this.type = type;
+    if (!Number.isInteger(size) || size < 0) throw new Error('Fragment size must be a non-negative integer');
     this.size = size;
   }
 
@@ -34,7 +39,7 @@ class Fragment {
   static async byUser(ownerId, expand = false) {
     // TODO
     const fragments = await listFragments(ownerId, expand);
-    if (!fragments) return [];
+    if (!fragments) throw new Error(`No fragments found for user ${ownerId}`);
     if (expand) return fragments.map((fragmentData) => new Fragment(fragmentData));
     return fragments.map((fragmentId) => new Fragment({ ownerId, id: fragmentId }));
   }
@@ -47,7 +52,7 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     // TODO
-    const fData = await readFragment(ownerId, id);
+    const fData = readFragment(ownerId, id);
     if (!fData) throw new Error(`Fragment ${id} not found for user ${ownerId}`);
     return new Fragment(fData);
   }
@@ -60,16 +65,24 @@ class Fragment {
    */
   static async delete(ownerId, id) {
     // TODO
-    await deleteFragment(ownerId, id);
+    try {
+      await deleteFragment(ownerId, id);
+    } catch {
+      throw new Error(`Fragment ${id} not found for user ${ownerId}`);
+    }
   }
 
   /**
    * Saves the current fragment to the database
    * @returns Promise<void>
    */
-  async save() {
+  save() {
     // TODO
-    await writeFragment(this.ownerId, this.id, this);
+    try {
+      writeFragment(this.ownerId, this.id, this);
+    } catch {
+      throw new Error(`Fragment ${this.id} not found for user ${this.ownerId}`);
+    }
   }
 
   /**
@@ -78,7 +91,12 @@ class Fragment {
    */
   getData() {
     // TODO
-    readFragmentData(this.ownerId, this.id);
+    if (!this.isText) throw new Error(`Fragment ${this.id} is not text type for user ${this.ownerId}`);
+    try {
+      return readFragmentData(this.ownerId, this.id);
+    } catch (error) {
+      throw new Error(`Failed to get fragment data: ${error.message}`);
+    }
   }
 
   /**
@@ -86,9 +104,13 @@ class Fragment {
    * @param {Buffer} data
    * @returns Promise<void>
    */
-  async setData(data) {
+  setData(data) {
     // TODO
-    await writeFragmentData(this.ownerId, this.id, data);
+    try {
+      writeFragmentData(this.ownerId, this.id, data);
+    } catch {
+      throw new Error(`Fragment ${this.id} not found for user ${this.ownerId}`);
+    }
   }
 
   /**
@@ -106,18 +128,22 @@ class Fragment {
    * @returns {boolean} true if fragment's type is text/*
    */
   get isText() {
-    // TODO
-    return true;
+    return this.mimeType.startsWith('text/');
   }
-
   /**
    * Returns the formats into which this fragment type can be converted
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
     // TODO
-    return true;
-  }
+    const conver = {
+      'text/plain': ['text/html', 'application/json'],
+      'text/plain; charset=utf-8': ['text/plain'],
+    };
+    if (!conver[this.type]) throw new Error(`No supported formats for ${this.type}`);
+    return conver[this.type];
+}
+
 
   /**
    * Returns true if we know how to work with this content type
@@ -127,9 +153,7 @@ class Fragment {
   static isSupportedType(value) {
     // TODO
     const supportedTypes = ['text/plain', 'text/plain: charset=utf-8'];
-
     const parsedValue = contentType.parse(value).type;
-
     // will return true if parsedValue is in supportedTypes
     return supportedTypes.includes(parsedValue);
   }

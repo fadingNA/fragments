@@ -5,15 +5,13 @@ const data = new MemoryDB();
 const metadata = new MemoryDB();
 
 // Write function fragment return a Promise
-const writeFragment = async (fragment) => 
-  new Promise((resolve, reject) => {
-    try {
-      const result = metadata.put(fragment.ownerId, fragment.id, fragment); // PUT
-      resolve(result);
-    } catch (error) {
-      reject(error);
-    }
-  });
+const writeFragment = (ownerId, id, fragment) => {
+  return new Promise((resolve, reject) => {
+    const result = metadata.put(ownerId, id, fragment); // PUT
+    if (result) resolve(result);
+    else reject (new Error ('Failed to put fragment'));
+  })
+}
 
 // Read a fragment from memory db
 const readFragment = (ownerId, id) => 
@@ -30,7 +28,7 @@ const readFragment = (ownerId, id) =>
   });
 
 // write a fragment data buffer to memory db
-const writeFragmentData = async (ownerId, id, buffer) => 
+const writeFragmentData =  async (ownerId, id, buffer) => 
   new Promise((resolve, reject) => {
     try {
       const result = data.put(ownerId, id, buffer); // PUT
@@ -63,7 +61,7 @@ const listFragments = async (ownerId, expand = false) => {
   return Promise.resolve(fragments.map((fragment) => fragment.id));
 };
 
-const deleteFragment = async (ownerId, id) =>
+const deleteFragment =  (ownerId, id) =>
   Promise.all([metadata.del(ownerId, id), data.del(ownerId, id)]);
 
 module.exports = {
