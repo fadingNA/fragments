@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
-const { author, version } = require('../package.json');
 const logger = require('./logger');
 const pino = require('pino-http')({
   logger,
@@ -18,19 +17,9 @@ app.use(compression());
 
 // Define simple health check route. If the server is running, it will return a 200 and the version number.
 // if not server dies
-app.get('/', (require, response) => {
-  // User should'nt see this or cache this respond
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#controlling_caching
-  response.setHeader('Cache-Control', 'no-cache');
 
-  // Send a 200 'OK' response with info about our repo
-  response.status(200).json({
-    status: 'ok',
-    author,
-    githubUrl: 'https://github.com/fadingNA/fragments',
-    version,
-  });
-});
+// Define our routes
+app.use('/', require('./routes'));
 
 // Add 404 middleware to handle unknown routes or any request that don't match the ones above.
 app.use((request, response) => {
