@@ -1,6 +1,9 @@
 // Define the express server and the middlewares that will be used.
 const express = require('express');
 const cors = require('cors');
+const passport = require('passport');
+const authenticate = require('./auth');
+
 const helmet = require('helmet');
 const compression = require('compression');
 const logger = require('./logger');
@@ -9,14 +12,20 @@ const pino = require('pino-http')({
 });
 const app = express();
 
+// Use gzip/deflate compression middleware
+
+
 // Calling app.use() means that every request will go through these middlewares in order.
 app.use(pino);
 app.use(helmet());
 app.use(cors());
 app.use(compression());
 
-// Define simple health check route. If the server is running, it will return a 200 and the version number.
-// if not server dies
+// set up passport authentication
+
+passport.use(authenticate.strategy());
+app.use(passport.initialize());
+
 
 // Define our routes
 app.use('/', require('./routes'));
