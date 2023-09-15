@@ -20,6 +20,7 @@ class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
     // TODO
     this.id = id || randomUUID(); //using a UUID with the built-in crypto module
+    //console.log(ownerId)
     this.ownerId = hash(ownerId); // using hash email
     this.created = created || new Date().toISOString(); // ISO 8601 string
     this.updated = updated || new Date().toISOString();
@@ -52,7 +53,7 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     // TODO
-    const fData = readFragment(ownerId, id);
+    const fData = await readFragment(ownerId, id);
     if (!fData) throw new Error(`Fragment ${id} not found for user ${ownerId}`);
     return new Fragment(fData);
   }
@@ -78,11 +79,7 @@ class Fragment {
    */
   save() {
     // TODO
-    try {
-      writeFragment(this.ownerId, this.id, this);
-    } catch {
-      throw new Error(`Fragment ${this.id} not found for user ${this.ownerId}`);
-    }
+    writeFragment(this);
   }
 
   /**
@@ -104,13 +101,11 @@ class Fragment {
    * @param {Buffer} data
    * @returns Promise<void>
    */
-  setData(data) {
+  async setData(data) {
     // TODO
-    try {
-      writeFragmentData(this.ownerId, this.id, data);
-    } catch {
-      throw new Error(`Fragment ${this.id} not found for user ${this.ownerId}`);
-    }
+    await writeFragmentData(this.ownerId, this.id, data);
+
+    
   }
 
   /**

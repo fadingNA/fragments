@@ -1,5 +1,5 @@
 // src/server.js
-
+require ('dotenv').config();
 const stoppable = require('stoppable');
 const logger = require('./logger');
 const app = require('./app');

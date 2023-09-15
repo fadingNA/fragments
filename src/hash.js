@@ -13,10 +13,12 @@
  * Use .slice(0, 8) if you want reduce the size.
  */
 
-const crypto = require('crypto');
+
+
+const { createHash } = require('crypto');
 
 /**
  * @param {string} email user's email address
  * @returns string Hashed email address
  */
-module.exports = (email) => crypto.createHash('sha256').update(email).digest('hex');
+module.exports = (email) => createHash('sha256').update(email).digest('hex');

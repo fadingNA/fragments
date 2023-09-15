@@ -1,74 +1,56 @@
 const MemoryDB = require('./memory-db');
 
-// Create two instances of our in-memory database
+// Create two in-memory databases: one for fragment metadata and the other for raw data
 const data = new MemoryDB();
 const metadata = new MemoryDB();
 
-// Write function fragment return a Promise
-const writeFragment = (ownerId, id, fragment) => {
-  return new Promise((resolve, reject) => {
-    const result = metadata.put(ownerId, id, fragment); // PUT
-    if (result) resolve(result);
-    else reject (new Error ('Failed to put fragment'));
-  })
+// Write a fragment's metadata to memory db. Returns a Promise
+function writeFragment(fragment) {
+  return metadata.put(fragment.ownerId, fragment.id, fragment);
 }
 
-// Read a fragment from memory db
-const readFragment = (ownerId, id) => 
-  new Promise((resolve, reject) => {
-    try {
-      const result = metadata.get(ownerId, id); // GET
-      resolve(result);
-    } catch (error) {
-      reject(error, {
-        message: `Fragment ${id} not found for user ${ownerId}`,
-        code: 404,
-      });
-    }
-  });
+// Read a fragment's metadata from memory db. Returns a Promise
+function readFragment(ownerId, id) {
+  return metadata.get(ownerId, id);
+}
 
-// write a fragment data buffer to memory db
-const writeFragmentData =  async (ownerId, id, buffer) => 
-  new Promise((resolve, reject) => {
-    try {
-      const result = data.put(ownerId, id, buffer); // PUT
-      resolve(result);
-    } catch (error) {
-      reject(error);
-    }
-  });
+// Write a fragment's data buffer to memory db. Returns a Promise
+function writeFragmentData(ownerId, id, buffer) {
+  return data.put(ownerId, id, buffer);
+}
 
-// read a fragment data buffer from memory db
-const readFragmentData = (ownerId, id) => 
-  new Promise((resolve, reject) => {
-    try {
-      const result = data.get(ownerId, id); // GET
-      resolve(result);
-    } catch (error) {
-      reject(error);
-    }
-  });
+// Read a fragment's data from memory db. Returns a Promise
+function readFragmentData(ownerId, id) {
+  console.log('ownerId:', ownerId, 'id:', id);
+  return data.get(ownerId, id);
+}
 
-// Get a List of fragment
-const listFragments = async (ownerId, expand = false) => {
+// Get a list of fragment ids/objects for the given user from memory db. Returns a Promise
+async function listFragments(ownerId, expand = false) {
   const fragments = await metadata.query(ownerId);
 
-  // if we don't get any fragments back, return an empty array
-  if (!fragments || expand) {
-    return Promise.resolve(fragments);
+  // If we don't get anything back, or are supposed to give expanded fragments, return
+  if (expand || !fragments) {
+    return fragments;
   }
-  // Otherwise map to only send back the ids
-  return Promise.resolve(fragments.map((fragment) => fragment.id));
-};
 
-const deleteFragment =  (ownerId, id) =>
-  Promise.all([metadata.del(ownerId, id), data.del(ownerId, id)]);
-
-module.exports = {
-    writeFragment,
-    readFragment,
-    writeFragmentData,
-    readFragmentData,
-    listFragments,
-    deleteFragment,
+  // Otherwise, map to only send back the ids
+  return fragments.map((fragment) => fragment.id);
 }
+
+// Delete a fragment's metadata and data from memory db. Returns a Promise
+function deleteFragment(ownerId, id) {
+  return Promise.all([
+    // Delete metadata
+    metadata.del(ownerId, id),
+    // Delete data
+    data.del(ownerId, id),
+  ]);
+}
+
+module.exports.listFragments = listFragments;
+module.exports.writeFragment = writeFragment;
+module.exports.readFragment = readFragment;
+module.exports.writeFragmentData = writeFragmentData;
+module.exports.readFragmentData = readFragmentData;
+module.exports.deleteFragment = deleteFragment;
