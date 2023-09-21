@@ -8,5 +8,6 @@ module.exports = (req, res) => {
     res.status(200).json({
       status: 'ok',
       fragments: [],
+      message: 'This is a placeholder response for the GET /api/fragments endpoint'
     });
   };
