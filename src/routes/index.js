@@ -10,6 +10,8 @@ const router = express.Router();
 
 const {authenticate} = require('../auth');
 
+const unneeded_variable = "This is a variable that is not used anywhere.";
+
 /**
  * Expose all of our API routes on /v1/* to include an API version.
  */
