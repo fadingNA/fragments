@@ -1,0 +1,29 @@
+# .github.workflow/ci
+
+# Continuous Integration
+name: ci
+
+# Trigger on push to master
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+job:
+  lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/setup-node@v3
+      with: 
+        node-version: '18'
+        cache: 'npm'
+    - name: Install node dependencies
+      run: npm ci
+    - name: Run ESLint
+      run: npm run lint
+      
