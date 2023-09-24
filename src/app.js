@@ -45,9 +45,9 @@ app.get('/v1/fragments/test-error', (req, res) => {
 // eslint-disable-next-line no-unused-vars
 app.use((error, request, response, next) => {
   const status = error.status || 500;
-  const message = error.message || 'Unable to process request';
+  const message = error.message;
   // If this is a server error, log something so we can see what's going on.
-  if (status >= 400) {
+  if (error.status >= 400) { // cannot use status because it might set to 500 by default
     logger.error(
       {
         error,
