@@ -31,3 +31,17 @@ describe('/ health check', () => {
     expect(res.body.version).toEqual(version);
   });
 });
+
+describe('Error handling middleware', () => {
+  test('should handle intentional server errors', async () => {
+    const res = await request(app).get('/bad');
+    expect(res.statusCode).toBe(502);
+    expect(res.body).toEqual({
+      status: 'error',
+      error: {
+        code: 502,
+        message: 'testing purpose message'
+      }
+    });
+  });
+});

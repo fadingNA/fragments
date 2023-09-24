@@ -8,9 +8,9 @@ const { version, author } = require('../../package.json');
 // Create a router that we can use to mount our API
 const router = express.Router();
 
-const {authenticate} = require('../auth');
+const { authenticate } = require('../auth');
 
-const {createSuccessResponse} = require('../response');
+const { createSuccessResponse } = require('../response');
 
 //const unneeded_variable = "This is a variable that is not used anywhere.";
 

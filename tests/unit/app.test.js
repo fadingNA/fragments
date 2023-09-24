@@ -1,37 +1,43 @@
+// tests/unit/app.test.js
+
 const request = require('supertest');
-const express = require('express');
-const app = express();
+const app = require('../../src/app');
+const logger = require('../../src/logger');
 
-// Import your error-handling middleware here
-// ...
-
-// Import the 404 middleware
-app.use((req, res) => {
-  // Pass along an error object to the error-handling middleware
-  res.status(404).json({
-    status: 'error',
-    error: {
-      message: 'not found',
-      code: 404,
-    },
+describe('Error logging', () => {
+  beforeAll(() => {
+    jest.spyOn(logger, 'error').mockImplementation(() => {}); 
+    // jest.spyOn is a Jest function that allows us to spy on a function and mock its implementation.
   });
-});
 
-describe('404 Middleware', () => {
-  it('should return a 404 error for a non-existent route', async () => {
-    const response = await request(app)
-      .get('/non-existent-route') // Replace with a route that doesn't exist in your app
-      .expect('Content-Type', /json/)
-      .expect(404);
+  afterAll(() => {
+    logger.error.mockRestore();
+    // Restore the original implementation of logger.error
+  });
 
-    expect(response.body).toEqual({
-      status: 'error',
-      error: {
-        message: 'not found',
-        code: 404,
+  test('code 500 or more than 500', async () => {
+  
+    const res = await request(app).get('/bad');
+
+    expect(res.status).toBeGreaterThanOrEqual(500);
+    expect(logger.error).toHaveBeenCalledWith(
+      {
+        error: expect.anything(),
       },
-    });
+      'Error processing request'
+    );
   });
 
-  // Add more test cases if there are different scenarios that trigger the 404 middleware
+  test('code 400 or more than 400', async () => {
+    // Trigger an error scenario that has a defined status of 400 or above.
+    const res = await request(app).get('/bad');
+
+    expect(res.status).toBeGreaterThanOrEqual(400);
+    expect(logger.error).toHaveBeenCalledWith(
+      {
+        error: expect.anything(),
+      },
+      'Error processing request'
+    );
+  });
 });
