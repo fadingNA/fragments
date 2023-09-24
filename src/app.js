@@ -12,6 +12,8 @@ const pino = require('pino-http')({
 });
 const app = express();
 
+const {createErrorResponse} = require('./response');
+
 // Use gzip/deflate compression middleware
 
 
@@ -58,13 +60,7 @@ app.use((error, request, response, next) => {
   }
 
   // Send a response with the error information
-  response.status(status).json({
-    status: 'error',
-    error: {
-      message,
-      code: status,
-    },
-  });
+  response.status(status).json(createErrorResponse(status, message));
 });
 
 

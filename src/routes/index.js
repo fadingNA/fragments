@@ -10,6 +10,8 @@ const router = express.Router();
 
 const {authenticate} = require('../auth');
 
+const {createSuccessResponse} = require('../response');
+
 //const unneeded_variable = "This is a variable that is not used anywhere.";
 
 /**
@@ -26,7 +28,7 @@ router.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   // Send a 200 'OK' response
   res.status(200).json({
-    status: 'ok',
+    status: createSuccessResponse().status,
     author,
     // Use your own GitHub URL for this!
     githubUrl: 'https://github.com/fadingNA/fragments',
