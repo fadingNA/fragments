@@ -1,5 +1,5 @@
 // Fix this path to point to your project's `memory-db.js` source file
-const MemoryDB = require("/Users/nonthachaiplodthong/Documents/Non's work/ccp/fragments/src/model/data/memory/memory-db.js");
+const MemoryDB = require("../../../../src/model/data/memory/memory-db");
 
 describe('memory-db', () => {
   let db;
