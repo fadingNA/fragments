@@ -4,7 +4,9 @@ const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
 
-const hash = require('../data/../../../src/hash')
+const hash = require('../data/../../../src/hash');
+
+const ContentTypes = [`text/plain`, `text/plain; charset=utf-8`];
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -18,17 +20,20 @@ const {
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
-    // TODO
-    this.id = id || randomUUID(); //using a UUID with the built-in crypto module
-    //console.log(ownerId)
-    this.ownerId = hash(ownerId); // using hash email
-    this.created = created || new Date().toISOString(); // ISO 8601 string
-    this.updated = updated || new Date().toISOString();
-    if (type === undefined) throw new Error('Fragment type is required');
-    if (!Fragment.isSupportedType(type)) throw new Error(`Unsupported type: ${type}`);
-    else this.type = type;
-    if (!Number.isInteger(size) || size < 0) throw new Error('Fragment size must be a non-negative integer');
+    this.id = id || randomUUID();
+
+    if (!ownerId || !type) throw new Error('ownerId and type are required');
+    ownerId = hash(ownerId);
+    this.ownerId = ownerId;
+
+    if (typeof size !== 'number' || size < 0) throw new Error('size must be a number and positive');
     this.size = size;
+
+    if (!Fragment.isSupportedType(type)) throw new Error(`${type} is invalid types`);
+    this.type = type;
+
+    this.created = created || new Date().toISOString();
+    this.updated = updated || new Date().toISOString();
   }
 
   /**
@@ -38,11 +43,13 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    // TODO
-    const fragments = await listFragments(ownerId, expand);
-    if (!fragments) throw new Error(`No fragments found for user ${ownerId}`);
-    if (expand) return fragments.map((fragmentData) => new Fragment(fragmentData));
-    return fragments.map((fragmentId) => new Fragment({ ownerId, id: fragmentId }));
+    try {
+      ownerId = hash(ownerId); // Ensure ownerId is hashed
+      const fragments = await listFragments(ownerId, expand);
+      return fragments;
+    } catch (err) {
+      throw new Error(`Failed to get fragments for user ${ownerId}: ${err.message}`);
+    }
   }
 
   /**
@@ -52,22 +59,29 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    // TODO
-    const fData = await readFragment(ownerId, id);
-    if (!fData) throw new Error(`Fragment ${id} not found for user ${ownerId}`);
-    return new Fragment(fData);
-  }
+    try {
+      ownerId = hash(ownerId); // Ensure ownerId is hashed
+      const fragment = await readFragment(ownerId, id);
+      if (!fragment) {
+        throw new Error(`No fragment found for ownerId=${ownerId} and id=${id}`);
+      }
 
+      return fragment instanceof Fragment ? fragment : new Fragment(fragment);
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
   /**
    * Delete the user's fragment data and metadata for the given id
    * @param {string} ownerId user's hashed email
    * @param {string} id fragment's id
    * @returns Promise<void>
    */
-  static async delete(ownerId, id) {
+  static delete(ownerId, id) {
     // TODO
     try {
-      await deleteFragment(ownerId, id);
+      ownerId = hash(ownerId); // Ensure ownerId is hashed
+      return deleteFragment(ownerId, id);
     } catch {
       throw new Error(`Fragment ${id} not found for user ${ownerId}`);
     }
@@ -78,21 +92,23 @@ class Fragment {
    * @returns Promise<void>
    */
   save() {
-    // TODO
-    writeFragment(this);
+    try {
+      this.updated = new Date().toISOString();
+      return writeFragment(this);
+    } catch (err) {
+      throw new Error(`Failed to save fragment ${this.id}: ${err.message}`);
+    }
   }
 
   /**
    * Gets the fragment's data from the database
    * @returns Promise<Buffer>
    */
-  getData() {
-    // TODO
-    if (!this.isText) throw new Error(`Fragment ${this.id} is not text type for user ${this.ownerId}`);
+  async getData() {
     try {
-      return readFragmentData(this.ownerId, this.id);
-    } catch (error) {
-      throw new Error(`Failed to get fragment data: ${error.message}`);
+      return await readFragmentData(this.ownerId, this.id);
+    } catch (err) {
+      throw new Error(`Error: ${err}`);
     }
   }
 
@@ -102,10 +118,16 @@ class Fragment {
    * @returns Promise<void>
    */
   async setData(data) {
-    // TODO
-    await writeFragmentData(this.ownerId, this.id, data);
-
-    
+    if (!data || !(data instanceof Buffer) || !Buffer.isBuffer(data)) {
+      throw new Error(`Fragment ${this.id} data must be a Buffer`);
+    }
+    try {
+      this.size = Buffer.byteLength(data);
+      await this.save();
+      return await writeFragmentData(this.ownerId, this.id, data);
+    } catch (e) {
+      throw new Error(`Failed to set fragment data: ${e.message}`);
+    }
   }
 
   /**
@@ -137,20 +159,16 @@ class Fragment {
     };
     if (!conver[this.type]) throw new Error(`No supported formats for ${this.type}`);
     return conver[this.type];
-}
-
+  }
 
   /**
    * Returns true if we know how to work with this content type
    * @param {string} value a Content-Type value (e.g., 'text/plain' or 'text/plain: charset=utf-8')
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
+
   static isSupportedType(value) {
-    // TODO
-    const supportedTypes = ['text/plain', 'text/plain: charset=utf-8'];
-    const parsedValue = contentType.parse(value).type;
-    // will return true if parsedValue is in supportedTypes
-    return supportedTypes.includes(parsedValue);
+    return ContentTypes.includes(value);
   }
 }
 

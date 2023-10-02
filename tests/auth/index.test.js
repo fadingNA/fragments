@@ -22,12 +22,17 @@ describe('auth', () => {
   test('throws an error when no valid config is found', () => {
     // delete all the env vars
     
-    delete process.env.AWS_COGNITO_POOL_ID;
-    delete process.env.AWS_COGNITO_CLIENT_ID;
-    delete process.env.HTPASSWD_FILE;
+     
+      delete process.env.AWS_COGNITO_POOL_ID;
+      delete process.env.AWS_COGNITO_CLIENT_ID;
+      delete process.env.HTPASSWD_FILE;
+    
+
+    
 
     expect(() => {
-      require('../../src/auth/index');
+      const authModule = require('../../src/auth/index');
+      authModule();  // invoke the function
     }).toThrow('missing env vars: no authorization configuration found');
   });
 });

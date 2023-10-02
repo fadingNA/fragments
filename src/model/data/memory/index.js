@@ -21,7 +21,6 @@ function writeFragmentData(ownerId, id, buffer) {
 
 // Read a fragment's data from memory db. Returns a Promise
 function readFragmentData(ownerId, id) {
-  console.log('ownerId:', ownerId, 'id:', id);
   return data.get(ownerId, id);
 }
 
