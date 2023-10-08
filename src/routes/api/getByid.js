@@ -31,6 +31,6 @@ module.exports = async (req, res) => {
 
   } catch (err) {
     logger.error(err);
-    return createErrorResponse(res, 500, 'Internal server error');
+    res.status(500).json(createErrorResponse(500, err.message))
   }
 };

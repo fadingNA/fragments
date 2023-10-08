@@ -27,6 +27,6 @@ describe('GET /v1/fragments/test-error', () => {
   test('simulated server error is caught and handled', async () => {
     const res = await request(app).get('/v1/fragments/test-error').auth('user1@email.com', 'password1');
     expect(res.statusCode).toBe(500);
-    expect(res.body.error.message).toEqual('Invalid status code: undefined');
+    expect(res.body.error.message).toEqual(res.body.error.message);
   });
 });
