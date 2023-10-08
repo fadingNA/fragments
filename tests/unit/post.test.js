@@ -22,7 +22,6 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send(data);
-    console.log(res.text)
     const body = JSON.parse(res.text);
     expect(res.statusCode).toBe(201);
     expect(body.status).toBe('ok');

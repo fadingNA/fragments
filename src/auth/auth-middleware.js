@@ -9,7 +9,7 @@ const logger = require('../logger');
  * @returns {Function} - the middleware function to use for authentication
  */
 module.exports = (strategyName) => {
-  console.log("Inside auth-middleware.js");
+
   return function (req, res, next) {
     /**
      * Define a custom callback to run after the user has been authenticated
@@ -18,17 +18,14 @@ module.exports = (strategyName) => {
      * @param {string} email - an authenticated user's email address
      */
     function callback(err, email) {
-      console.log("Inside callback")
       // Something failed, let the the error handling middleware deal with it
       if (err) {
-        console.log("Inside if !err")
         logger.warn({ err }, 'error authenticating user');
         return next(createErrorResponse(500, 'Unable to authenticate user'));
       }
 
       // Not authorized, return a 401
       if (!email) {
-        console.log("Inside else if !email")
         return res.status(401).json(createErrorResponse(401, 'Unauthorized'));
       }
 
