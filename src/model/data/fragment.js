@@ -1,14 +1,7 @@
-// Use crypto.randomUUID() to create unique IDs, see:
-// https://nodejs.org/api/crypto.html#cryptorandomuuidoptions
+// fragment.js
 const { randomUUID } = require('crypto');
-// Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
-
 const hash = require('../data/../../../src/hash');
-
-const ContentTypes = [`text/plain`, `text/plain; charset=utf-8`];
-
-// Functions for working with fragment metadata/data using our DB
 const {
   readFragment,
   writeFragment,
@@ -17,6 +10,8 @@ const {
   listFragments,
   deleteFragment,
 } = require('./memory/index');
+
+const ContentTypes = [`text/plain`, `text/plain; charset=utf-8`];
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
@@ -43,13 +38,10 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    try {
-      ownerId = hash(ownerId); // Ensure ownerId is hashed
-      const fragments = await listFragments(ownerId, expand);
-      return fragments;
-    } catch (err) {
-      throw new Error(`Failed to get fragments for user ${ownerId}: ${err.message}`);
-    }
+    if (ownerId === undefined) throw new Error('ownerId is required');
+    ownerId = hash(ownerId); // Ensure ownerId is hashed
+    const fragments = await listFragments(ownerId, expand);
+    return fragments;
   }
 
   /**
@@ -105,11 +97,7 @@ class Fragment {
    * @returns Promise<Buffer>
    */
   async getData() {
-    try {
-      return await readFragmentData(this.ownerId, this.id);
-    } catch (err) {
-      throw new Error(`Error: ${err}`);
-    }
+    return await readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -121,13 +109,9 @@ class Fragment {
     if (!data || !(data instanceof Buffer) || !Buffer.isBuffer(data)) {
       throw new Error(`Fragment ${this.id} data must be a Buffer`);
     }
-    try {
-      this.size = Buffer.byteLength(data);
-      await this.save();
-      return await writeFragmentData(this.ownerId, this.id, data);
-    } catch (e) {
-      throw new Error(`Failed to set fragment data: ${e.message}`);
-    }
+    this.size = Buffer.byteLength(data);
+    await this.save();
+    return await writeFragmentData(this.ownerId, this.id, data);
   }
 
   /**

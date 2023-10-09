@@ -12,7 +12,7 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .auth(testUserEmail, testUserPassword)
       .set('Content-Type', 'text/plain')
       .send(data);
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toBe(200 );
   });
 
   test('authenticated users can create a plain text fragment', async () => {
@@ -23,7 +23,7 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .set('Content-Type', 'text/plain')
       .send(data);
     const body = JSON.parse(res.text);
-    expect(res.statusCode).toBe(201);
+    expect(res.statusCode).toBe(200);
     expect(body.status).toBe('ok');
     expect(Object.keys(body.fragment)).toEqual([
       'id',
@@ -52,7 +52,7 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .auth(testUserEmail, testUserPassword)
       .set('Content-Type', 'text/plain')
       .send(largeData);
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toBe(200);
     expect(JSON.parse(response.text).fragment.size).toEqual(largeData.byteLength);
   });
 });

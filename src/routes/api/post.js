@@ -9,6 +9,8 @@ const API_URL = process.env.API_URL;
  * Creates a new fragment for the current (i.e., authenticated user)
  */
 const postFragments = async (req, res) => {
+  logger.info(`[POST] v1/api/fragments/${req.params.id}`);
+
   const user = req.user;
   const data = req.body;
   const type = req.headers['content-type'];
@@ -16,6 +18,7 @@ const postFragments = async (req, res) => {
   if (Fragment.isSupportedType(type)) {
 
     try {
+      logger.debug(`Creating new fragment for user ${user} with type ${type}`);
       // Generate a new Fragment metadata record based on Request
       const fragment = new Fragment({ ownerId: user, type });
       // Store metadata and data
@@ -24,7 +27,7 @@ const postFragments = async (req, res) => {
       res.setHeader('Content-type', fragment.type);
       res.setHeader('Location', `${API_URL}/v1/fragments/${fragment.id}`);
       // Return successful response
-      return res.status(201).json(
+      return res.status(200).json(
         createSuccessResponse({
           fragment,
         })

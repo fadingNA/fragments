@@ -44,13 +44,13 @@ app.get('/v1/fragments/test-error', (req, res) => {
 
 // Add 404 middleware to handle any requests for resources that can't be found
 app.use((req, res) => {
-	res.status(404).json({
-		status: 'error',
-		error: {
-			message: 'not found',
-			code: 404,
-		},
-	});
+  res.status(404).json({
+    status: 'error',
+    error: {
+      message: 'not found',
+      code: 404,
+    },
+  });
 });
 
 // add error-handling middleware to deal with anything else
@@ -58,10 +58,8 @@ app.use((req, res) => {
 app.use((error, request, response, next) => {
   const status = error.status || 500;
   const message = error.message;
-
-
-  // If this is a server error, log something so we can see what's going on.
-  if (error.status >= 500) { // cannot use status because it might set to 500 by default
+  if (error.status >= 500) {
+    // cannot use status because it might set to 500 by default
     logger.error(
       {
         error,
@@ -69,7 +67,6 @@ app.use((error, request, response, next) => {
       'Error processing request'
     );
   }
-  // Send a response with the error information
   response.status(status).json(createErrorResponse(status, message));
 });
 
