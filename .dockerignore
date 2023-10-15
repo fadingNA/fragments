@@ -1,0 +1,15 @@
+.github/
+.vscode/
+coverage/
+node_modules/
+tests/
+.env
+.eslintrc.js
+.git/
+.gitignore
+.prettier*
+jest*
+
+# Ignore all files in the root except this file
+tests/
+!tests/.htpasswd

@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../../fragments/src/app');
+const app = require('../../src/app');
 
 describe('POST /v1/fragments - Data Transmission Debugging', () => {
   const testUserEmail = 'user1@email.com';
