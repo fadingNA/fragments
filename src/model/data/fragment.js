@@ -51,19 +51,11 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    try {
-      ownerId = hash(ownerId); // Ensure ownerId is hashed
-      const fragment = await readFragment(ownerId, id);
-      if (!fragment) {
-        const error = new Error(`No fragment found for ownerId=${ownerId} and id=${id}`);
-        error.code = 404;
-        throw error;
-      }
+    ownerId = hash(ownerId); // Ensure ownerId is hashed
+    const fragment = await readFragment(ownerId, id);
+    if (!fragment) throw new Error(`Fragment ${id} not found for user ${ownerId}`);
 
-      return fragment instanceof Fragment ? fragment : new Fragment(fragment);
-    } catch (err) {
-      throw new Error(err);
-    }
+    return fragment instanceof Fragment ? fragment : new Fragment(fragment);
   }
   /**
    * Delete the user's fragment data and metadata for the given id
@@ -86,8 +78,8 @@ class Fragment {
    * @returns Promise<void>
    */
   save() {
-      this.updated = new Date().toISOString();
-      return writeFragment(this); 
+    this.updated = new Date().toISOString();
+    return writeFragment(this);
   }
 
   /**
