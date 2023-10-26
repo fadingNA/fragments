@@ -12,7 +12,7 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .auth(testUserEmail, testUserPassword)
       .set('Content-Type', 'text/plain')
       .send(data);
-    expect(response.statusCode).toBe(200 );
+    expect(response.statusCode).toBe(200);
   });
 
   test('authenticated users can create a plain text fragment', async () => {
@@ -54,5 +54,17 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .send(largeData);
     expect(response.statusCode).toBe(200);
     expect(JSON.parse(response.text).fragment.size).toEqual(largeData.byteLength);
+  });
+
+  test('should include Location header after creating a new fragment', async () => {
+    const data = Buffer.from('hello');
+    const response = await request(app)
+      .post('/v1/fragments')
+      .auth(testUserEmail, testUserPassword)
+      .set('Content-Type', 'text/plain')
+      .send(data);
+  
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['location']).toMatch(/^http:\/\/localhost:8080\/v1\/fragments\/[a-zA-Z0-9-]+$/);
   });
 });

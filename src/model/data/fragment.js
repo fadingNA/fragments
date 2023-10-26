@@ -55,7 +55,9 @@ class Fragment {
       ownerId = hash(ownerId); // Ensure ownerId is hashed
       const fragment = await readFragment(ownerId, id);
       if (!fragment) {
-        throw new Error(`No fragment found for ownerId=${ownerId} and id=${id}`);
+        const error = new Error(`No fragment found for ownerId=${ownerId} and id=${id}`);
+        error.code = 404;
+        throw error;
       }
 
       return fragment instanceof Fragment ? fragment : new Fragment(fragment);
@@ -84,12 +86,8 @@ class Fragment {
    * @returns Promise<void>
    */
   save() {
-    try {
       this.updated = new Date().toISOString();
-      return writeFragment(this);
-    } catch (err) {
-      throw new Error(`Failed to save fragment ${this.id}: ${err.message}`);
-    }
+      return writeFragment(this); 
   }
 
   /**

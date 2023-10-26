@@ -37,4 +37,12 @@ describe('GET /v1/fragments/test-error', () => {
     expect(res.statusCode).toBe(500);
     expect(res.body.error.message).toEqual(res.body.error.message);
   });
+
+  test('If fragment ID not found, return 404', async () => {
+    const res = await request(app)
+      .get('/v1/fragments/1123123')
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(404);
+    expect(res.body.error.message).toEqual('Fragment not found');
+  });
 });

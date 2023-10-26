@@ -19,6 +19,8 @@ const postFragments = async (req, res) => {
       logger.debug(`Creating new fragment for user ${user} with type ${type}`);
       const fragment = new Fragment({ ownerId: user, type });
       await fragment.setData(data);
+      fragment.save();
+      
 
       logger.info('Fragment Created setHeader');
       res.setHeader('Content-type', fragment.type);
@@ -34,7 +36,7 @@ const postFragments = async (req, res) => {
       res.status(415).json(createErrorResponse(415, `${type} is not supported Content Type`));
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(err, 'Error while creating fragment on POST /fragments');
     res.status(500).json(createErrorResponse(500, err.message));
   }
 };
