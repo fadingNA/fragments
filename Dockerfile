@@ -11,8 +11,7 @@ LABEL description="Fragments container node.js microservice"
 #FROM ENV
 
 ENV PORT=8080
-ENV NPM_CONFIG_LOGLEVER=warn
-ENV NPM_CONFIG_COLOR=false
+ENV NODE_ENV=production
 
 WORKDIR /app
 
