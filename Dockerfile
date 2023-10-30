@@ -14,11 +14,11 @@ ENV PORT=8080 \
 WORKDIR /app
 
 # Copy package.json and source code
-COPY package*.json /app
-COPY ./src ./src
-COPY ./tests/.htpasswd ./tests/.htpasswd
+COPY package*.json /app 
+COPY   ./src ./src 
+COPY   ./tests/.htpasswd ./tests/.htpasswd 
 
-
+RUN npm ci --only=production
 # Stage 2: Production
 FROM node:18-alpine3.17@sha256:a136ed7b0df71082cdb171f36d640ea3b392a5c70401c642326acee767b8c540 AS builder
 
@@ -30,16 +30,12 @@ COPY --from=dependencies /app /app
 # Copy source code
 COPY . .
 
-# Install production dependencies
-RUN npm ci --only=production
-
-
 # Start the container by running our server
 USER node
 CMD npm start
-EXPOSE 8080
+EXPOSE 80
 
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl --fail localhost:80 || exit 
+    CMD curl --fail localhost:80 || exit 
 
