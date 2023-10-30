@@ -1,32 +1,45 @@
-# Docker initial script for Fragments contaainer.
+# Stage 1: Dependencies
+FROM node:18-alpine3.17@sha256:a136ed7b0df71082cdb171f36d640ea3b392a5c70401c642326acee767b8c540 AS dependencies
 
-# use node version 20.5.0
-FROM node:20.5.0
+# Meta details
+LABEL maintainer="Nonthachai Plodthong <nplodthong@myseneca.ca>" \
+    description="Fragments container node.js microservice"
 
-#FROM Instruction
-
-LABEL maintainer="Nonthachai Plodthong <nplodthong@myseneca.ca>"
-LABEL description="Fragments container node.js microservice"
-
-#FROM ENV
-
-ENV PORT=8080
-ENV NODE_ENV=production
+# Environment variables
+ENV PORT=8080 \
+    NPM_CONFIG_LOGLEVEL=warn \
+    NPM_CONFIG_COLOR=false \
+    NODE_ENV=production
 
 WORKDIR /app
 
-#COPY Instruction
-COPY package*.json /app/
-
-#RUN Instruction
-RUN npm install
-
-#COPY Instruction
+# Copy package.json and source code
+COPY package*.json /app
 COPY ./src ./src
-
-#Copy HTPASSWD file
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
+
+# Stage 2: Production
+FROM node:18-alpine3.17@sha256:a136ed7b0df71082cdb171f36d640ea3b392a5c70401c642326acee767b8c540 AS builder
+
+WORKDIR /app
+
+# Copy node_modules from dependencies stage
+COPY --from=dependencies /app /app
+
+# Copy source code
+COPY . .
+
+# Install production dependencies
+RUN npm ci --only=production
+
+
 # Start the container by running our server
+USER node
 CMD npm start
 EXPOSE 8080
+
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD curl --fail localhost:80 || exit 
+
