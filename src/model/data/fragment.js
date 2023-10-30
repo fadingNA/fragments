@@ -11,7 +11,7 @@ const {
   deleteFragment,
 } = require('./memory/index');
 
-const ContentTypes = [`text/plain`, `text/plain; charset=utf-8`];
+const ContentTypes = [`text/plain`, `text/plain; charset=utf-8`, `text/html`, `application/json`];
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
