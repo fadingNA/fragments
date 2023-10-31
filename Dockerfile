@@ -18,7 +18,8 @@ COPY package*.json /app
 COPY   ./src ./src 
 COPY   ./tests/.htpasswd ./tests/.htpasswd 
 
-RUN npm ci --only=production
+RUN npm install
+
 # Stage 2: Production
 FROM node:18-alpine3.17@sha256:a136ed7b0df71082cdb171f36d640ea3b392a5c70401c642326acee767b8c540 AS builder
 
@@ -30,9 +31,12 @@ COPY --from=dependencies /app /app
 # Copy source code
 COPY . .
 
+
+RUN chown -R node:node /app
 # Start the container by running our server
+USER root
+RUN npm ci --only=production
 USER node
-CMD npm start
 EXPOSE 80
 
 
