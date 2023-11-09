@@ -11,7 +11,14 @@ const {
   deleteFragment,
 } = require('./memory/index');
 
-const ContentTypes = [`text/plain`, `text/plain; charset=utf-8`, `text/html`, `application/json`];
+const ContentTypes = [
+  `text/plain`,
+  `text/plain; charset=utf-8`,
+  `text/html`,
+  `application/json`,
+  `text/markdown; charset=utf-8`,
+  `text/markdown`,
+];
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
@@ -130,6 +137,10 @@ class Fragment {
     const conver = {
       'text/plain': ['text/html', 'application/json'],
       'text/plain; charset=utf-8': ['text/plain'],
+      'text/html': ['text/plain'],
+      'application/json': ['text/plain'],
+      'text/markdown': ['html'],
+      'text/markdown; charset=utf-8': ['html'],
     };
     if (!conver[this.type]) throw new Error(`No supported formats for ${this.type}`);
     return conver[this.type];
