@@ -11,7 +11,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY src ./src 
 COPY tests/.htpasswd ./tests/.htpasswd 
 COPY package*.json ./
-CMD npm start
+CMD ["npm", "start"]
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=3\
     CMD curl --silent --fail localhost:8080 || exit 1
