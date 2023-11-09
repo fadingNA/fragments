@@ -12,7 +12,7 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .auth(testUserEmail, testUserPassword)
       .set('Content-Type', 'text/plain')
       .send(data);
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(201);
   });
 
   test('authenticated users can create a plain text fragment', async () => {
@@ -23,9 +23,9 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .set('Content-Type', 'text/plain')
       .send(data);
     const body = JSON.parse(res.text);
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(201);
     expect(body.status).toBe('ok');
-    expect(Object.keys(body.fragment)).toEqual([
+    expect(Object.keys(body.fragments)).toEqual([
       'id',
       'ownerId',
       'size',
@@ -33,8 +33,8 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       'created',
       'updated',
     ]);
-    expect(body.fragment.size).toEqual(data.byteLength);
-    expect(body.fragment.type).toContain('text/plain');
+    expect(body.fragments.size).toEqual(data.byteLength);
+    expect(body.fragments.type).toContain('text/plain');
   });
   test('should reject requests with invalid content type', async () => {
     const data = Buffer.from('hello');
@@ -52,8 +52,8 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .auth(testUserEmail, testUserPassword)
       .set('Content-Type', 'text/plain')
       .send(largeData);
-    expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.text).fragment.size).toEqual(largeData.byteLength);
+    expect(response.statusCode).toBe(201);
+    expect(JSON.parse(response.text).fragments.size).toEqual(largeData.byteLength);
   });
 
   test('should include Location header after creating a new fragment', async () => {
@@ -63,8 +63,45 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .auth(testUserEmail, testUserPassword)
       .set('Content-Type', 'text/plain')
       .send(data);
-  
-    expect(response.statusCode).toBe(200);
-    expect(response.headers['location']).toMatch(/^http:\/\/localhost:8080\/v1\/fragments\/[a-zA-Z0-9-]+$/);
+
+    expect(response.statusCode).toBe(201);
+    expect(response.headers['location']).toMatch(
+      /^http:\/\/localhost:8080\/v1\/fragments\/[a-zA-Z0-9-]+$/
+    );
+  });
+
+  test('Handle content type text/* ', async () => {
+    const textData = 'hello';
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth(testUserEmail, testUserPassword)
+      .set('Content-Type', 'text/html')
+      .send(textData);
+    console.log(res.text);
+
+    expect(res.statusCode).toBe(201);
+    expect(res.header['content-type']).toMatch(/text\/html/);
+    const json_response = JSON.parse(res.text);
+    expect(json_response.status).toBe('ok');
+  });
+  test('Handle content type application/json ', async () => {
+    const test_data = 'Nonthachai';
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth(testUserEmail, testUserPassword)
+      .set('Content-Type', 'application/json')
+      .send(test_data);
+
+    expect(res.statusCode).toBe(201);
+  });
+  test('not Handle wrong type', async () => {
+    const test_data = 'Nonthachai_2';
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth(testUserEmail, testUserPassword)
+      .set('Content-Type', 'test/json')
+      .send(test_data);
+
+    expect(res.statusCode).toBe(415);
   });
 });

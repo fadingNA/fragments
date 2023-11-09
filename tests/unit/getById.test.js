@@ -19,7 +19,7 @@ describe('Get fragment by id', () => {
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send('This is fragment');
-    const { id } = JSON.parse(postRes.text).fragment;
+    const { id } = JSON.parse(postRes.text).fragments;
 
     const getRes = await request(app)
       .get(`/v1/fragments/${id}`)

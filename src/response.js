@@ -2,8 +2,8 @@
 
 module.exports.createSuccessResponse = function (data) {
   return {
-    status: 'ok',
     ...data,
+    status: 'ok',
   };
 };
 

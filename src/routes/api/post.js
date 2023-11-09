@@ -3,7 +3,7 @@ const { Fragment } = require('../../model/data/fragment');
 const logger = require('../../logger');
 
 const API_URL = process.env.API_URL;
- 
+
 /**
  * POST /fragments
  * Creates a new fragment for the current (i.e., authenticated user)
@@ -20,15 +20,14 @@ const postFragments = async (req, res) => {
       const fragment = new Fragment({ ownerId: user, type });
       await fragment.setData(data);
       fragment.save();
-      
 
       logger.info('Fragment Created setHeader');
       res.setHeader('Content-type', fragment.type);
       res.setHeader('Location', `${API_URL}/v1/fragments/${fragment.id}`);
 
-      return res.status(200).json(
+      return res.status(201).json(
         createSuccessResponse({
-          fragment,
+         fragments: fragment,
         })
       );
     } else {

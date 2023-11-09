@@ -14,6 +14,8 @@ module.exports = async (req, res) => {
       return res.status(404).json(createErrorResponse(404, 'Fragment not found'));
     }
 
+    
+
     const retrieved_fragment_data = await retrieved_fragment.getData();
     res.set('Content-Type', retrieved_fragment.type);
     res.status(200).send(retrieved_fragment_data);

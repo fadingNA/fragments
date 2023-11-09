@@ -4,10 +4,10 @@ const MemoryDB = require('./memory-db');
 const data = new MemoryDB();
 const metadata = new MemoryDB();
 
-// Write a fragment's metadata to memory db. Returns a Promise
-function writeFragment(fragment) {
-  return metadata.put(fragment.ownerId, fragment.id, fragment);
-}
+  // Write a fragment's metadata to memory db. Returns a Promise
+  function writeFragment(fragment) {
+    return metadata.put(fragment.ownerId, fragment.id, fragment);
+  }
 
 // Read a fragment's metadata from memory db. Returns a Promise
 function readFragment(ownerId, id) {
