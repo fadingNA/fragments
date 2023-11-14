@@ -4,6 +4,7 @@ LABEL maintainer="Nonthachai Plodthong | nplodthong@myseneca.ca" \
     description="Dockerfile for Fragments UI"
 WORKDIR /app
 COPY package*.json ./
+RUN apk --no-cache add curl
 RUN npm ci --only=production
 
 # Stage 2: Setup the application

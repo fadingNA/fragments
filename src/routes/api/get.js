@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     const expand = !!(req.query.expand === '1');
     const fragment = await Fragment.byUser(req.user, expand);
     if (fragment === undefined) throw new Error('Fragment not found');
-
+    
     res.status(200).json(
       createSuccessResponse({
         fragments: fragment,
