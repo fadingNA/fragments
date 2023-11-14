@@ -4,12 +4,12 @@ LABEL maintainer="Nonthachai Plodthong | nplodthong@myseneca.ca" \
     description="Dockerfile for Fragments UI"
 WORKDIR /app
 COPY package*.json ./
-RUN apt-get update && apt-get install -y curl=8.4.0 \
-    npm ci --only=production
+RUN npm ci --only=production
 
 # Stage 2: Setup the application
 FROM node:18-alpine@sha256:435dcad253bb5b7f347ebc69c8cc52de7c912eb7241098b920f2fc2d7843183d AS builder
 WORKDIR /app
+RUN apk update && apk add --no-cache curl=1.2.5-r1
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 COPY --from=dependencies /app/node_modules ./node_modules
