@@ -14,6 +14,8 @@ const authenticate  = require('../auth');
 
 const { createSuccessResponse } = require('../response');
 
+const { hostname } = require('os');
+
 
 
 //const unneeded_variable = "This is a variable that is not used anywhere.";
@@ -37,8 +39,12 @@ router.get('/', (req, res) => {
     // Use your own GitHub URL for this!
     githubUrl: 'https://github.com/fadingNA/fragments',
     version,
+    // Include the hostname in the response
+    hostname: hostname(),
   });
 });
+
+
 
 
 
