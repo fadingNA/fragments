@@ -55,19 +55,19 @@ jobs:
           push: true
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO }}:${{ env.VERSION_TAG }}, ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO }}:latest
 
-          # Update the Amazon ECS Task Definition with the new image ID
+      # Update the Amazon ECS Task Definition with the new image ID
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: update-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPO: fragments
-          VERSION_TAG: ${{ github.ref_name }}
+          VERSION_TAG: ${{github.ref_name}}
         with:
           task-definition: fragments-definition.json
           container-name: fragments_cluster
           # Use the image we just built and pushed to ECR for this tag
-          image: ${{ env.ECR_REGISTRY }}${{ env.ECR_REPO }}:${{ env.VERSION_TAG }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ env.VERSION_TAG }}
           # Add all the necessary environment variables, using GitHub Encrypted Secrets
           # for any values that should not be checked into git directly.  Here are
           # a few to get you started, but you should fill in the rest yourself.
