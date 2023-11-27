@@ -1,7 +1,7 @@
 // XXX: temporary use of memory-db until we add DynamoDB
-
 const s3Client = require('./s3Client');
 const { PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+
 
 console.log("==== AWS DB ====")
 

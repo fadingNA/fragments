@@ -1,7 +1,7 @@
 // fragment.js
 const { randomUUID } = require('crypto');
 const contentType = require('content-type');
-const hash = require('../data/../../../src/hash');
+const hash = require('../../hash');
 const {
   readFragment,
   writeFragment,
