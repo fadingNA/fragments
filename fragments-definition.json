@@ -28,43 +28,43 @@
         "environment": [
           {
             "name": "API_URL",
-            "value": "{{ secrets.API_URL }}"
+            "value": "http://ec2-107-22-132-127.compute-1.amazonaws.com:8080"
           },
           {
             "name": "AWS_COGNITO_CLIENT_ID",
-            "value": "{{ secrets.AWS_COGNITO_CLIENT_ID }}"
+            "value": "4s7bacjstjmgn94d4suk8vf9s8"
           },
           {
             "name": "AWS_COGNITO_HOSTED_UI_DOMAIN",
-            "value": "{{ secrets.AWS_COGNITO_HOSTED_UI_DOMAIN }}"
+            "value": "nonthachai-fragments.auth.us-east-1.amazoncognito.com"
           },
           {
             "name": "AWS_COGNITO_POOL_ID",
-            "value": "{{ secrets.AWS_COGNITO_POOL_ID }}"
+            "value": "us-east-1_a9huSWoLA"
           },
           {
             "name": "AWS_REGION",
-            "value": "{{ secrets.AWS_REGION }}"
+            "value": "us-east-1"
           },
           {
             "name": "AWS_S3_ENDPOINT_URL",
-            "value": "{{ secrets.AWS_S3_ENDPOINT_URL }}"
+            "value": "http://localhost:4566"
           },
           {
             "name": "HTPASSWD_FILE",
-            "value": "{{ secrets.HTPASSWD_FILE }}"
+            "value": "tests/.htpasswd"
           },
           {
             "name": "OAUTH_SIGN_IN_REDIRECT_URL",
-            "value": "{{ secrets.OAUTH_SIGN_IN_REDIRECT_URL }}"
+            "value": "http://localhost:1234"
           },
           {
             "name": "OAUTH_SIGN_OUT_REDIRECT_URL",
-            "value": "{{ secrets.OAUTH_SIGN_OUT_REDIRECT_URL }}"
+            "value": "http://localhost:1234"
           },
           {
             "name": "PORT",
-            "value": "{{ secrets.PORT}}"
+            "value": "8080"
           }
         ],
         "resourceRequirements": null,
@@ -78,7 +78,7 @@
         "memoryReservation": 512,
         "volumesFrom": [],
         "stopTimeout": null,
-        "image": "{{ secrets.fragments_image }}",
+        "image": "fadingna/fragments:latest",
         "startTimeout": null,
         "firelensConfiguration": null,
         "dependsOn": null,

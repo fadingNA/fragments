@@ -56,7 +56,7 @@ jobs:
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO }}:${{ env.VERSION_TAG }}, ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO }}:latest
 
           # Update the Amazon ECS Task Definition with the new image ID
-      - name: ${{ secrets.fragments_image }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
         id: update-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         env:
