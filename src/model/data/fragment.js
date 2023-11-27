@@ -60,7 +60,7 @@ class Fragment {
   static async byId(ownerId, id) {
     ownerId = hash(ownerId); // Ensure ownerId is hashed
     const fragment = await readFragment(ownerId, id);
-    if (!fragment) throw new Error(`Fragment ${id} not found for user ${ownerId}`);
+    if (!fragment) return null;
 
     return fragment instanceof Fragment ? fragment : new Fragment(fragment);
   }

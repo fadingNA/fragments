@@ -34,6 +34,6 @@ module.exports = async (req, res) => {
     }
   } catch (err) {
     logger.error(err);
-    res.status(500).json(createErrorResponse(500, err.message));
+    res.status(404).json(createErrorResponse(500, err.message));
   }
 };

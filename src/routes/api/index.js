@@ -36,5 +36,6 @@ router.post('/fragments', rawBody(), require('./post'));
 router.get('/fragments/:id', require('./getByid'));
 router.get('/fragments/:id/info', require('./getByIdInfo'));
 
-
+// [DELETE] v1/api/fragments/:id
+router.delete('/fragments/:id', require('./delete'));
 module.exports = router;

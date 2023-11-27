@@ -335,7 +335,11 @@ describe('Fragment class', () => {
 
       await Fragment.delete('1234', fragment.id);
 
-      expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
+      const deletedFragment = await Fragment.byId('1234', fragment.id);
+
+      expect(deletedFragment).toBeNull();
+
+      
     });
   });
 });
