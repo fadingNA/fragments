@@ -3,6 +3,8 @@
 const s3Client = require('./s3Client');
 const { PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
+console.log("==== AWS DB ====")
+
 async function writeFragmentData(ownerId, id, data) {
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
