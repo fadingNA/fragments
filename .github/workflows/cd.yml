@@ -84,6 +84,7 @@ jobs:
             AWS_COGNITO_POOL_ID=${{ secrets.AWS_COGNITO_POOL_ID }}
             AWS_S3_ENDPOINT_URL=${{ secrets.AWS_S3_ENDPOINT_URL }}
             HTPASSWD_FILE=${{ secrets.HTPASSWD_FILE }}
+            AWS_S3_BUCKET_NAME=nplodthong-fragments
             OAUTH_SIGN_IN_REDIRECT_URL=${{ secrets.OAUTH_SIGN_IN_REDIRECT_URL }}
             OAUTH_SIGN_OUT_REDIRECT_URL=${{ secrets.OAUTH_SIGN_OUT_REDIRECT_URL }}
             PORT=${{ secrets.PORT }}
