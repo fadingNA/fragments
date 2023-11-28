@@ -9,7 +9,7 @@ const {
   writeFragmentData,
   listFragments,
   deleteFragment,
-} = require('./memory/index');
+} = require('./index');
 
 const ContentTypes = [
   `text/plain`,
