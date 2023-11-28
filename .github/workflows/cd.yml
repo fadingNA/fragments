@@ -80,7 +80,6 @@ jobs:
             AWS_REGION=us-east-1
             AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}
             AWS_COGNITO_POOL_ID=${{ secrets.AWS_COGNITO_POOL_ID }}
-            AWS_S3_ENDPOINT_URL=${{ secrets.AWS_S3_ENDPOINT_URL }}
             API_URL=https://ec2con-ecsel-xxyhjmsq6p8i-955025123.us-east-1.elb.amazonaws.com:8080
             AWS_S3_BUCKET_NAME=nplodthong-fragments
 
