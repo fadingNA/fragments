@@ -36,7 +36,7 @@ async function listFragments(ownerId, expand = false) {
 async function writeFragmentData(ownerId, id, data) {
   // Create the PUT API params from our details
   const params = {
-    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Bucket: "nplodthong-fragments",
     // Our key will be a mix of the ownerID and fragment id, written as a path
     Key: `${ownerId}/${id}`,
     Body: data,
