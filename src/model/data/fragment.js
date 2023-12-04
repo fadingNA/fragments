@@ -60,7 +60,7 @@ class Fragment {
   static async byId(ownerId, id) {
     try {
       const fragments = await readFragment(ownerId, id);
-      return fragments instanceof Fragment ? fragment : new Fragment(fragment);
+      return fragments instanceof Fragment ? fragments : new Fragment(fragments);
     } catch (err) {
       logger.error({ err }, 'Error no ID found');
       throw new Error(err);
