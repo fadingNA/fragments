@@ -82,6 +82,7 @@ jobs:
             AWS_COGNITO_POOL_ID=${{ secrets.AWS_COGNITO_POOL_ID }}
             API_URL=http://ec2con-ecsel-xxyhjmsq6p8i-955025123.us-east-1.elb.amazonaws.com:8080
             AWS_S3_BUCKET_NAME=nplodthong-fragments
+            AWS_DYNAMODB_TABLE_NAME=fragments
 
 
       - name: Deploy Amazon ECS task definition
