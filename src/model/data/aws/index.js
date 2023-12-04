@@ -1,4 +1,3 @@
-// XXX: temporary use of memory-db until we add DynamoDB
 const s3Client = require('./s3Client');
 const ddbDocClient = require('./ddbDocClient');
 const { PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
@@ -15,6 +14,7 @@ function writeFragment(fragment) {
     Item: fragment,
   };
 
+  logger.debug({ params }, 'writing fragment to DynamoDB');
   // Create a PUT command to send to DynamoDB
   const command = new PutCommand(params);
 
@@ -30,6 +30,8 @@ function writeFragment(fragment) {
 // Reads a fragment from DynamoDB. Returns a Promise<fragment|undefined>
 async function readFragment(ownerId, id) {
   // Configure our GET params, with the name of the table and key (partition key + sort key)
+  logger.info({ ownerId, id }, 'reading fragment from DynamoDB');
+  logger.info(process.env.AWS_DYNAMODB_TABLE_NAME);
   const params = {
     TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
     Key: { ownerId, id },
@@ -101,6 +103,7 @@ async function writeFragmentData(ownerId, id, data) {
   // Create a PUT Object command to send to S3
   const command = new PutObjectCommand(params);
 
+  logger.debug({ params }, 'writing fragment data to S3');
   try {
     // Use our client to send the command
     await s3Client.send(command);
@@ -139,7 +142,7 @@ async function readFragmentData(ownerId, id) {
 
   // Create a GET Object command to send to S3
   const command = new GetObjectCommand(params);
-
+  logger.debug({ params }, 'reading fragment data from S3');
   try {
     // Get the object from the Amazon S3 bucket. It is returned as a ReadableStream.
     const data = await s3Client.send(command);
@@ -175,7 +178,7 @@ async function deleteFragment(ownerId, id) {
       console.error(`Error deleting ${Key} from ${TableName}: ${err}`);
       throw new Error('Error deleting fragment data');
     }
-  } catch (err) {
+  } catch (err) { // check discussion board they have post something on my post okk
     const { Bucket, Key } = params;
     console.error(`Error deleting ${Key} from ${Bucket}: ${err}`);
     throw new Error('Error deleting fragment data');

@@ -1,7 +1,7 @@
 // fragment.js
 const { randomUUID } = require('crypto');
 const contentType = require('content-type');
-const hash = require('../../hash');
+
 const {
   readFragment,
   writeFragment,
@@ -10,6 +10,7 @@ const {
   listFragments,
   deleteFragment,
 } = require('./index');
+const logger = require('../../logger');
 
 const ContentTypes = [
   `text/plain`,
@@ -25,7 +26,6 @@ class Fragment {
     this.id = id || randomUUID();
 
     if (!ownerId || !type) throw new Error('ownerId and type are required');
-    ownerId = hash(ownerId);
     this.ownerId = ownerId;
 
     if (typeof size !== 'number' || size < 0) throw new Error('size must be a number and positive');
@@ -46,7 +46,7 @@ class Fragment {
    */
   static async byUser(ownerId, expand = false) {
     if (ownerId === undefined) throw new Error('ownerId is required');
-    ownerId = hash(ownerId); // Ensure ownerId is hashed
+
     const fragments = await listFragments(ownerId, expand);
     return fragments;
   }
@@ -58,11 +58,13 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    ownerId = hash(ownerId); // Ensure ownerId is hashed
-    const fragment = await readFragment(ownerId, id);
-    if (!fragment) return null;
-
-    return fragment instanceof Fragment ? fragment : new Fragment(fragment);
+    try {
+      const fragments = await readFragment(ownerId, id);
+      return fragments instanceof Fragment ? fragment : new Fragment(fragment);
+    } catch (err) {
+      logger.error({ err }, 'Error no ID found');
+      throw new Error(err);
+    }
   }
   /**
    * Delete the user's fragment data and metadata for the given id
@@ -73,7 +75,6 @@ class Fragment {
   static delete(ownerId, id) {
     // TODO
     try {
-      ownerId = hash(ownerId); // Ensure ownerId is hashed
       return deleteFragment(ownerId, id);
     } catch {
       throw new Error(`Fragment ${id} not found for user ${ownerId}`);

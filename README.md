@@ -1,5 +1,5 @@
 # Fragments
-LAB1 
+Cloud Computing FALL 2023
 
 # Introduction
 This is the first lab of Cloud computing of programmer at the Seneca College of Computer Programming and Analysis. 
@@ -7,6 +7,15 @@ This is the first lab of Cloud computing of programmer at the Seneca College of 
 Step 1: Create a new repository on your GitHub account and name it fragments.
 - [x] Create a new repository on your GitHub account and name it fragments.
 - [x] Clone the repository to my local machine.
+- [x] CI and CD with GitHub Actions.
+- [x] Dockerize the application.
+- [x] Deploy the application to Docker Hub
+- [x] EC2 instance on AWS.
+- [x] Deploy the application to AWS.
+- [x] ECS on AWS.
+- [x] Load Balancer on AWS.
+- [x] S3 on AWS.
+- [x] DynamoDB on AWS.
 > ```git clone [repository link]```
 
 

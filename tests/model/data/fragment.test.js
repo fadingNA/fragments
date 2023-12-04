@@ -333,11 +333,12 @@ describe('Fragment class', () => {
 
       await fragment.setData(Buffer.from('a'));
 
+      console.log(fragment.id);
       await Fragment.delete('1234', fragment.id);
-
+      console.log(fragment.id , "=====================");
       const deletedFragment = await Fragment.byId('1234', fragment.id);
 
-      expect(deletedFragment).toBeNull();
+      expect(deletedFragment).toBeUndefined();
 
       
     });

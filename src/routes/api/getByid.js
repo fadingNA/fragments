@@ -17,6 +17,7 @@ module.exports = async (req, res) => {
     const fragment_id = path.basename(req.params.id, path.extname(req.params.id));
     const conversion = path.extname(req.params.id);
     const retrieved_fragment = await Fragment.byId(req.user, fragment_id);
+    logger.debug({ retrieved_fragment }, "Fragement retrieved in get by id");
 
     if (conversion && !retrieved_fragment.formats.includes(conversion.substring(1))) {
       console.log(conversion.substring(1));
@@ -28,12 +29,14 @@ module.exports = async (req, res) => {
       res.set('Content-Type', 'text/html');
       res.status(200).send(html_content);
     } else {
+      console.log("==============" , retrieved_fragment , "=============")
       const retrieved_fragment_data = await retrieved_fragment.getData();
       res.set('Content-Type', retrieved_fragment.type);
+      logger.debug({ retrieved_fragment_data }, "Fragement retrieved in get by id");
       res.status(200).send(retrieved_fragment_data);
     }
   } catch (err) {
     logger.error(err);
-    res.status(404).json(createErrorResponse(500, err.message));
+    res.status(404).json(createErrorResponse(err.status, err.message));
   }
 };
