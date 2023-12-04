@@ -338,7 +338,7 @@ describe('Fragment class', () => {
       console.log(fragment.id , "=====================");
       const deletedFragment = await Fragment.byId('1234', fragment.id);
 
-      expect(deletedFragment).toBeUndefined();
+      expect(deletedFragment).toBeNull();
 
       
     });

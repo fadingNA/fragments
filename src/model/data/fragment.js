@@ -59,13 +59,19 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     try {
-      const fragments = await readFragment(ownerId, id);
-      return fragments instanceof Fragment ? fragments : new Fragment(fragments);
+      const fragment = await readFragment(ownerId, id);
+
+      if (!fragment) {
+        return null;
+      }
+
+      return fragment instanceof Fragment ? fragment : new Fragment(fragment);
     } catch (err) {
-      logger.error({ err }, 'Error no ID found');
+      logger.error({ err }, 'ERROR! Unable to get a fragment by the given id');
       throw new Error(err);
     }
   }
+
   /**
    * Delete the user's fragment data and metadata for the given id
    * @param {string} ownerId user's hashed email

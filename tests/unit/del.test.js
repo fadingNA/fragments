@@ -14,10 +14,10 @@ describe('DELETE /v1/fragments', () => {
       .auth('invalid@email.com', 'incorrect_password')
       .expect(401));
 
-  // No fragment with the given id
-  test('if no id found, returns 404 error', async () => {
+
+  test('Fragments cannot find id from readfragmentData', async () => {
     const deleted = await request(app)
-      .delete('/v1/fragments/randomid')
+      .delete('/v1/fragments/xxxxxxx')
       .auth('user1@email.com', 'password1');
 
     expect(deleted.statusCode).toBe(404);
