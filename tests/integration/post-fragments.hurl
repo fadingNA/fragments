@@ -47,3 +47,29 @@ Content-Length: 19
 [Asserts]
 header "Content-Type" matches "^text/plain;\\s*charset=utf-8$"
 body == "This is a fragment!"
+
+
+PUT {{url}}
+Content-Type: text/plain; charset=utf-8
+
+[BasicAuth]
+user1@email.com:password1
+
+
+`updated`
+
+HTTP/1.1 200
+
+
+GET {{url}}
+[BasicAuth]
+user1@email.com:password1
+
+
+HTTP/1.1 200
+Content-Type: text/plain; charset=utf-8
+Content-Length: 7
+
+[Asserts]
+header "Content-Type" matches "^text/plain;\\s*charset=utf-8$"
+body == "updated"

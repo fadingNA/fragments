@@ -18,6 +18,8 @@ function writeFragment(fragment) {
   // Create a PUT command to send to DynamoDB
   const command = new PutCommand(params);
 
+
+  
   try {
     return ddbDocClient.send(command);
   } catch (err) {
@@ -178,7 +180,8 @@ async function deleteFragment(ownerId, id) {
       console.error(`Error deleting ${Key} from ${TableName}: ${err}`);
       throw new Error('Error deleting fragment data');
     }
-  } catch (err) { // check discussion board they have post something on my post okk
+  } catch (err) {
+    // check discussion board they have post something on my post okk
     const { Bucket, Key } = params;
     console.error(`Error deleting ${Key} from ${Bucket}: ${err}`);
     throw new Error('Error deleting fragment data');

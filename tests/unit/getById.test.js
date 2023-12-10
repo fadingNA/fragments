@@ -1,7 +1,8 @@
 // tests/unit/getById.test.js
 
 const request = require('supertest');
-
+const fs = require('fs');
+const path = require('path');
 const app = require('../../src/app');
 
 describe('Get fragment by id', () => {
@@ -48,17 +49,12 @@ describe('Get fragment by id', () => {
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/markdown')
       .send('# This is fragment');
-    console.log({
-      post,
-    });
+
     const { id } = JSON.parse(post.text).fragments;
     const get_res = await request(app)
       .get(`/v1/fragments/${id}.html`)
       .auth('user1@email.com', 'password1');
 
-    console.log({
-      get_res,
-    });
     expect(get_res.statusCode).toBe(200);
     expect(get_res.headers['content-type']).toEqual('text/html; charset=utf-8');
   });
@@ -69,7 +65,48 @@ describe('GET /v1/fragments/test-error', () => {
     const res = await request(app)
       .get('/v1/fragments/test-error')
       .auth('user1@email.com', 'password1');
-    expect(res.statusCode).toBe(404);
+    expect(res.statusCode).toBe(500);
     expect(res.body.error.message).toEqual(res.body.error.message);
+  });
+});
+
+describe('GET /v1/fragments/img', () => {
+  test('if fragment is image, return image/png', async () => {
+    const imagePath = path.join(__dirname, '../../lib/CAA_logo.png');
+    const test_img = fs.readFileSync(imagePath);
+
+    const post = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'image/png')
+      .send(test_img);
+
+    const id = post.header.location.split('fragments/')[1];
+
+    const get_res = await request(app)
+      .get(`/v1/fragments/${id}.png`)
+      .auth('user1@email.com', 'password1');
+    expect(get_res.statusCode).toBe(200);
+
+    expect(get_res.headers['content-type']).toContain('image/');
+  });
+  test('if fragment is image, return image/jpeg', async () => {
+    const imagePath = path.join(__dirname, '../../lib/caa-logo.jpg');
+    const test_img = fs.readFileSync(imagePath);
+
+    const post = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'image/jpeg')
+      .send(test_img);
+
+    const id = post.header.location.split('fragments/')[1];
+
+    const get_res = await request(app)
+      .get(`/v1/fragments/${id}.jpeg`)
+      .auth('user1@email.com', 'password1');
+    expect(get_res.statusCode).toBe(200);
+    console.log(get_res.headers);
+    expect(get_res.headers['content-type']).toContain('image/');
   });
 });

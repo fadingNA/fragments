@@ -17,8 +17,16 @@ const ContentTypes = [
   `text/plain; charset=utf-8`,
   `text/html`,
   `application/json`,
+  `application/pdf`,
   `text/markdown; charset=utf-8`,
   `text/markdown`,
+  `image/png`,
+  `image/jpeg`,
+  `image/gif`,
+  `image/webp`,
+  `image/tiff`,
+  `image/bmp`,
+  `image/jpg`,
 ];
 
 class Fragment {
@@ -58,13 +66,13 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
+    console.log('get into byid');
     try {
       const fragment = await readFragment(ownerId, id);
 
       if (!fragment) {
         return null;
       }
-
       return fragment instanceof Fragment ? fragment : new Fragment(fragment);
     } catch (err) {
       logger.error({ err }, 'ERROR! Unable to get a fragment by the given id');
@@ -113,9 +121,16 @@ class Fragment {
     if (!data || !(data instanceof Buffer) || !Buffer.isBuffer(data)) {
       throw new Error(`Fragment ${this.id} data must be a Buffer`);
     }
-    this.size = Buffer.byteLength(data);
-    await this.save();
-    return await writeFragmentData(this.ownerId, this.id, data);
+    try {
+      this.size = Buffer.byteLength(data);
+
+      await this.save();
+
+      return await writeFragmentData(this.ownerId, this.id, data);
+    } catch (err) {
+      logger.error({ err }, 'ERROR! Unable to set data for the fragment');
+      throw new Error(err);
+    }
   }
 
   /**
@@ -140,7 +155,6 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    // TODO
     const conver = {
       'text/plain': ['text/html', 'application/json'],
       'text/plain; charset=utf-8': ['text/plain'],
@@ -148,8 +162,14 @@ class Fragment {
       'application/json': ['text/plain'],
       'text/markdown': ['html'],
       'text/markdown; charset=utf-8': ['html'],
+      'image/png': ['png'],
+      'image/jpeg': ['jpeg'],
+      'image/gif': ['gif'],
+      'image/webp': ['webp'],
     };
+
     if (!conver[this.type]) throw new Error(`No supported formats for ${this.type}`);
+
     return conver[this.type];
   }
 

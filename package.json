@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test:watch": "jest -c jest.config.js --runInBand --watch --",
-    "test": "jest -c jest.config.js --runInBand --",
+    "test": "jest -c jest.config.js --runInBand --detectOpenHandles",
     "coverage": "jest -c jest.config.js --runInBand --coverage",
     "lint": "eslint --config .eslintrc.js './src/**/*.js' './tests/**/*.js'",
     "start": "node src/index.js",
@@ -48,6 +48,7 @@
     "pino-http": "^8.5.0",
     "pino-pretty": "^10.2.0",
     "process": "^0.11.10",
+    "sharp": "^0.33.0",
     "stoppable": "^1.1.0"
   },
   "bugs": {

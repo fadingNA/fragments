@@ -20,7 +20,6 @@ const postFragments = async (req, res) => {
       const fragment = new Fragment({ ownerId: user, type });
       await fragment.setData(data);
       fragment.save();
-
       logger.info('Fragment Created setHeader');
       res.setHeader('Content-type', fragment.type);
       res.setHeader('Location', `${API_URL}/v1/fragments/${fragment.id}`);

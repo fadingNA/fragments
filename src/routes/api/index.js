@@ -1,8 +1,4 @@
 // src/routes/api/index.js
-
-/**
- * The main entry-point for the v1 version of the fragments API.
- */
 const express = require('express');
 const contentType = require('content-type');
 const { Fragment } = require('../../../src/model/data/fragment');
@@ -38,4 +34,8 @@ router.get('/fragments/:id/info', require('./getByIdInfo'));
 
 // [DELETE] v1/api/fragments/:id
 router.delete('/fragments/:id', require('./delete'));
+
+// [PUT / Update] v1/api/fragments/put
+router.put('/fragments/:id', rawBody(), require('./put'));
+
 module.exports = router;

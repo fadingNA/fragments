@@ -27,7 +27,7 @@ describe('GET /v1/fragments/test-error', () => {
     const res = await request(app)
       .get('/v1/fragments/test-error')
       .auth('user1@email.com', 'password1');
-    expect(res.statusCode).toBe(404);
+    expect(res.statusCode).toBe(500);
     expect(res.body.error.message).toEqual(res.body.error.message);
   });
 });

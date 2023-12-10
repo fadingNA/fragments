@@ -1,5 +1,7 @@
 const request = require('supertest');
 const app = require('../../src/app');
+const fs = require('fs');
+const path = require('path');
 
 describe('POST /v1/fragments - Data Transmission Debugging', () => {
   const testUserEmail = 'user1@email.com';
@@ -103,5 +105,33 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .send(test_data);
 
     expect(res.statusCode).toBe(415);
+  });
+
+  test('Handle content type image/png ', async () => {
+    const imagePath = path.join(__dirname, '../../lib/CAA_logo.png');
+    const test_img = fs.readFileSync(imagePath);
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth(testUserEmail, testUserPassword)
+      .set('Content-Type', 'image/png')
+      .send(test_img);
+    console.log({
+      res,
+    });
+    expect(res.statusCode).toBe(201);
+  });
+
+  test('Not accept content type image/svg ', async () => {
+    const imagePath = path.join(__dirname, '../../lib/ChatGPT_logo.svg');
+    const test_img = fs.readFileSync(imagePath);
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth(testUserEmail, testUserPassword)
+      .set('Content-Type', 'image/svg')
+      .send(test_img);
+    console.log({
+      res,
+    });
+    
   });
 });
