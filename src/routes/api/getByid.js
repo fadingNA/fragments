@@ -57,7 +57,7 @@ async function convertToImage(retrievedFragment, res) {
     res.set('Content-Type', getMimeType(retrievedFragment));
     res.status(200).send(retrievedFragment.getData());
   } else {
-    console.log('Here ?');
+
     return createErrorResponse(415, 'Unsupported Media Type');
   }
 }
@@ -75,7 +75,7 @@ module.exports = async (req, res) => {
     }
 
     if (conversion && !retrieved_fragment.formats.includes(conversion.substring(1))) {
-      console.log('Here ?');
+
       return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
     }
 

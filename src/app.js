@@ -14,8 +14,6 @@ const app = express();
 
 const { createErrorResponse } = require('./response');
 
-// Use gzip/deflate compression middleware
-
 // Calling app.use() means that every request will go through these middlewares in order.
 app.use(pino);
 app.use(helmet());
@@ -35,14 +33,12 @@ app.get('/bad', (req, res, next) => {
   next(error);
 });
 
-// This is just for testing purposes. Remove or comment it out after testing.
-app.get('/v1/fragments/test-error', (req, res) => {
+app.get('/v1/fragments/cpp55', (req, res) => {
   const error = new Error('Intentional server error for testing.');
   const errorResponse = createErrorResponse(error.status, error);
   res.status(error.status).json(errorResponse);
 });
 
-// Add 404 middleware to handle any requests for resources that can't be found
 app.use((req, res) => {
   res.status(404).json({
     status: 'error',
@@ -53,7 +49,6 @@ app.use((req, res) => {
   });
 });
 
-// add error-handling middleware to deal with anything else
 // eslint-disable-next-line no-unused-vars
 app.use((error, request, response, next) => {
   const status = error.status || 500;

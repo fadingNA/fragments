@@ -123,6 +123,9 @@ class Fragment {
     }
     try {
       this.size = Buffer.byteLength(data);
+      console.log('Data:', data);
+      console.log('Data type:', typeof data);
+      console.log('Is Buffer:', Buffer.isBuffer(data));
 
       await this.save();
 

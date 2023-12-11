@@ -11,12 +11,8 @@ const deleteFrags = async (req, res) => {
       res.status(404).json(createErrorResponse(`Fragment ${id} not found for user ${req.user}`));
       return;
     }
-    console.log('fragments by id is: ', fragments_byId);
-    console.log('req.user is: ', req.user);
-  
     await Fragment.delete(req.user, id);
     res.status(200).json(createSuccessResponse('Fragment Deleted'));
-
   } catch (err) {
     console.log('Error is: ', err);
     res.status(500).json(createErrorResponse('Internal Server Error'));

@@ -4,29 +4,29 @@ const logger = require('../../logger');
 
 const API_URL = process.env.API_URL || 'http://localhost:8080';
 
-/**
- * POST /fragments
- * Creates a new fragment for the current (i.e., authenticated user)
- */
 const postFragments = async (req, res) => {
   logger.info(`[POST] v1/api/fragments/${req.params.id}`);
   const user = req.user;
   const data = req.body;
   const type = req.headers['content-type'];
-  // Check the Content-Type is supported or not
+
   try {
     if (Fragment.isSupportedType(type)) {
       logger.debug(`Creating new fragment for user ${user} with type ${type}`);
       const fragment = new Fragment({ ownerId: user, type });
       await fragment.setData(data);
-      fragment.save();
+      logger.info({
+        fragment,
+      });
+
       logger.info('Fragment Created setHeader');
       res.setHeader('Content-type', fragment.type);
       res.setHeader('Location', `${API_URL}/v1/fragments/${fragment.id}`);
 
+      logger.info('Fragment after Response', fragment);
       return res.status(201).json(
         createSuccessResponse({
-         fragments: fragment,
+          fragments: fragment,
         })
       );
     } else {

@@ -129,9 +129,7 @@ describe('POST /v1/fragments - Data Transmission Debugging', () => {
       .auth(testUserEmail, testUserPassword)
       .set('Content-Type', 'image/svg')
       .send(test_img);
-    console.log({
-      res,
-    });
-    
+
+    expect(res.statusCode).toBe(415);
   });
 });

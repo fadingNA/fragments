@@ -13,7 +13,6 @@ describe('Get fragment by id', () => {
     request(app).get('/v1/fragments/1').auth('user1@email.com', 'indsadssword'));
   expect(401);
 
-  // Using a valid username/password pair should give a success result with fragment data with given id
   test('authenticated users get fragment data with the given id', async () => {
     const postRes = await request(app)
       .post('/v1/fragments')
