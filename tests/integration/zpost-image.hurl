@@ -5,7 +5,7 @@ Content-Type: image/png
 [BasicAuth]
 user1@email.com:password1
 
-file, lib/icon-pdf.png;
+file, lib/CAA_logo.png;
 
 
 HTTP/1.1 201
