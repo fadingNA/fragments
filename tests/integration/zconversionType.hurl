@@ -79,7 +79,7 @@ GET  {{url1}}.png
 user1@email.com:password1
 
 HTTP/1.1 200
-Content-Length: 166949
+Content-Length: 636531
 [Asserts]
-header "Content-Type" startsWith "image/jpeg"
+header "Content-Type" startsWith "image/png"
 
