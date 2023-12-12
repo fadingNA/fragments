@@ -88,6 +88,8 @@ jobs:
         # NOTE: this file needs to be made executable *before* you check into git:
         # $ chmod +x ./scripts/local-aws-setup.sh
         run: ./scripts/local-aws-setup.sh
+      - name: List contents of lib directory
+        run: ls -la lib/
       - name: Run Hurl Tests
         run: npm run hurl
 
