@@ -18,9 +18,10 @@ const putFragments = async (req, res) => {
       }
       fragment.updated = new Date();
       await fragment.setData(req.body);
+      await fragment.save();
+
       res.setHeader('Content-type', fragment.type);
       res.setHeader('Location', `${API_URL}/v1/fragments/${fragment.id}`);
-      await fragment.save();
 
       res.status(200).json(
         createSuccessResponse({

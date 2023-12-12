@@ -165,10 +165,10 @@ class Fragment {
       'application/json': ['text/plain'],
       'text/markdown': ['html'],
       'text/markdown; charset=utf-8': ['html'],
-      'image/png': ['png'],
-      'image/jpeg': ['jpeg'],
-      'image/gif': ['gif'],
-      'image/webp': ['webp'],
+      'image/png': ['png', 'jpeg', 'gif', 'webp'],
+      'image/jpeg': ['jpeg' , 'png', 'gif', 'webp'],
+      'image/gif': ['gif' , 'png', 'jpeg', 'webp'],
+      'image/webp': ['webp' , 'png', 'jpeg', 'gif'],
     };
 
     if (!conver[this.type]) throw new Error(`No supported formats for ${this.type}`);

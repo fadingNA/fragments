@@ -3,7 +3,7 @@
 POST http://localhost:8080/v1/fragments
 
 # user1@email.com:password1
-Content-Type: text/plain
+Content-Type: application/json
 
 [BasicAuth]
 user1@email.com:password1
@@ -27,59 +27,20 @@ jsonpath "$.fragments.ownerId" matches "^[0-9a-fA-F]+$"
 # You could also write a regex for this and use matches
 jsonpath "$.fragments.created" isString
 jsonpath "$.fragments.updated" isString
-jsonpath "$.fragments.type" == "text/plain"
+jsonpath "$.fragments.type" == "application/json"
 # 19 is the length of our fragment data: 'This is a fragment!'
 jsonpath "$.fragments.size" == 19
 
 [Captures] 
 url: header "Location"
 
-
-GET {{url}}.html
+PUT {{url}}
+Content-Type: application/json
 [BasicAuth]
 user1@email.com:password1
 
-HTTP/1.1 415
-
-
-POST http://localhost:8080/v1/fragments
-
-# user1@email.com:password1
-Content-Type: image/png
-
-[BasicAuth]
-user1@email.com:password1
-
-
-file, lib/CAA_logo.png;
-
-HTTP/1.1 201
-[Asserts]
-# The Location header should look like what we expect (including the fragment id)
-header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[A-Za-z0-9_-]+$"
-jsonpath "$.status" == "ok"
-
-
-
-[Captures]
-url1: header "Location"
-
-GET {{url1}}
-[BasicAuth]
-user1@email.com:password1
+`test`
 
 HTTP/1.1 200
 [Asserts]
-header "Content-Type" startsWith "image/png"
-
-
-
-GET  {{url1}}.png
-[BasicAuth]
-user1@email.com:password1
-
-HTTP/1.1 200
-Content-Length: 166949
-[Asserts]
-header "Content-Type" startsWith "image/jpeg"
-
+jsonpath "$.fragment.type" == "application/json"
