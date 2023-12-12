@@ -15,7 +15,7 @@ header "Content-Type" == "image/png; charset=utf-8"
 jsonpath "$.status" == "ok"
 jsonpath "$.fragments.type" == "image/png"
 # length of our fragments data
-jsonpath "$.fragments.size" == 2735
+jsonpath "$.fragments.size" == 94820
 
 # Capture the Location URL into a variable named `url`
 [Captures]
@@ -26,7 +26,7 @@ GET {{url}}
 user1@email.com:password1
 
 HTTP/1.1 200
-Content-Length: 2735
+Content-Length: 94820
 
 [Asserts]
 header "Content-Type" startsWith "image/png"
